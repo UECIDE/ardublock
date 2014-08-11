@@ -9,36 +9,97 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
-import processing.app.Editor;
-import processing.app.tools.Tool;
+import uecide.app.*;
+import uecide.app.debug.*;
+import uecide.app.editors.*;
+import java.io.*;
+import java.util.*;
+import java.net.*;
+import java.util.zip.*;
+import java.util.regex.*;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
+import javax.swing.text.*;
+import javax.swing.table.*;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.event.*;
+import say.swing.*;
+import org.json.simple.*;
+import java.beans.*;
+
+
+import uecide.app.Editor;
+import uecide.plugin.Plugin;
 
 import com.ardublock.core.Context;
 import com.ardublock.ui.ArduBlockToolFrame;
 import com.ardublock.ui.listener.OpenblocksFrameListener;
 
-public class ArduBlockTool implements Tool, OpenblocksFrameListener
+public class ArduBlockTool extends Plugin implements OpenblocksFrameListener
 {
-	static Editor editor;
 	static ArduBlockToolFrame openblocksFrame;
+
+    public static HashMap<String, String> pluginInfo = null;
+    public static URLClassLoader loader = null;
+    public static void setLoader(URLClassLoader l) { loader = l; }
+    public static void setInfo(HashMap<String, String>info) { pluginInfo = info; }
+    public static String getInfo(String item) { return pluginInfo.get(item); }
+    public ArduBlockTool(Editor e) { System.err.println("Started ArduBlock"); editor = e; init(); }
+    public ArduBlockTool(EditorBase e) { editorTab = e; }
+
+    public ImageIcon getFileIconOverlay(File f) {
+        return null;
+    }
+
+    public void populateMenu(JMenu menu, int flags) {
+        if (flags == (Plugin.MENU_TOOLS | Plugin.MENU_TOP)) {
+            JMenuItem item = new JMenuItem("ArduBlocks");
+            item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            ArduBlockTool.this.run();
+                        }
+                    });
+                }
+            });
+            menu.add(item);
+        }
+    }
+
+    public void populateContextMenu(JPopupMenu menu, int flags, DefaultMutableTreeNode node) {
+    }
+
+    public void addToolbarButtons(JToolBar toolbar, int flags) {
+    }
+
+    public static void populatePreferences(JPanel p) {
+    }
+
+    public static String getPreferencesTitle() {
+        return "ArduBlocks";
+    }
+
+    public static void savePreferences() {
+    }
+
 	
-	public void init(Editor editor) {
-		if (ArduBlockTool.editor == null )
-		{
-			ArduBlockTool.editor = editor;
-			ArduBlockTool.openblocksFrame = new ArduBlockToolFrame();
-			ArduBlockTool.openblocksFrame.addListener(this);
-			Context context = Context.getContext();
-			String arduinoVersion = this.getArduinoVersion();
-			context.setInArduino(true);
-			context.setArduinoVersionString(arduinoVersion);
-			context.setEditor(editor);
-			System.out.println("Arduino Version: " + arduinoVersion);
-		}
+	public void init() {
+        ArduBlockTool.openblocksFrame = new ArduBlockToolFrame();
+        ArduBlockTool.openblocksFrame.addListener(this);
+        Context context = Context.getContext();
+        String arduinoVersion = this.getArduinoVersion();
+        context.setInArduino(true);
+        context.setArduinoVersionString(arduinoVersion);
+        context.setEditor(editor);
+        System.out.println("Arduino Version: " + arduinoVersion);
 	}
 
 	public void run() {
 		try {
-			ArduBlockTool.editor.toFront();
+			editor.toFront();
 			ArduBlockTool.openblocksFrame.setVisible(true);
 			ArduBlockTool.openblocksFrame.toFront();
 		} catch (Exception e) {
@@ -69,8 +130,10 @@ public class ArduBlockTool implements Tool, OpenblocksFrameListener
 	}
 	
 	public void didGenerate(String source) {
-		ArduBlockTool.editor.setText(source);
-		ArduBlockTool.editor.handleExport(false);
+        int tab = editor.openOrSelectFile(editor.getSketch().getMainFile());
+        EditorBase eb = editor.getTab(tab);
+		eb.setText(source);
+//		editor.handleExport(false);
 	}
 	
 	private String getArduinoVersion()
