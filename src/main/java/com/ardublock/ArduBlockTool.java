@@ -9,9 +9,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
-import uecide.app.*;
-import uecide.app.debug.*;
-import uecide.app.editors.*;
+import org.uecide.*;
+import org.uecide.debug.*;
+import org.uecide.editors.*;
 import java.io.*;
 import java.util.*;
 import java.net.*;
@@ -30,8 +30,8 @@ import org.json.simple.*;
 import java.beans.*;
 
 
-import uecide.app.Editor;
-import uecide.plugin.Plugin;
+import org.uecide.Editor;
+import org.uecide.plugin.Plugin;
 
 import com.ardublock.core.Context;
 import com.ardublock.ui.ArduBlockToolFrame;

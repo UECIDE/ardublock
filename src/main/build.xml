@@ -106,7 +106,7 @@
     </target>
 
     <target name="bundle" depends="build" if="bundle">
-        <copy file="${ant.project.name}.jar" todir="${uecide.path}/resources/uecide/app/bundles/plugins/" />
+        <copy file="${ant.project.name}.jar" todir="${uecide.path}/resources/org/uecide/bundles/plugins/" />
     </target>
 
     <target name="test" depends="install">
@@ -118,7 +118,7 @@
     <target name="publish" depends="build">
         <exec executable="scp">
             <arg value="${ant.project.name}.jar" />
-            <arg value="autobuild:/var/www/uecide/plugins-087/plugins" />
+            <arg value="autobuild:/var/www/uecide/plugins-088/plugins" />
         </exec>
     </target>
 

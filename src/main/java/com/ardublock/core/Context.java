@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import uecide.app.Editor;
+import org.uecide.Editor;
 
 import com.ardublock.ui.listener.OpenblocksFrameListener;
 
